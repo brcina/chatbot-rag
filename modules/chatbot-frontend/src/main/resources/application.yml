@@ -1,0 +1,16 @@
+micronaut:
+  application:
+    name: chatbot-frontend
+  server:
+    port: ${SERVER_PORT:3000}
+
+api:
+  backend:
+    url: ${API_BACKEND_URL:http://localhost:8080}
+
+# Static resources configuration    
+micronaut:
+  router:
+    static-resources:
+      default:
+        enabled: false  # We handle static files via controller

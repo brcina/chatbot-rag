@@ -1,0 +1,8 @@
+dependencies {
+    api project(':modules:core')
+    
+    // Tool implementations
+    implementation "org.jsoup:jsoup:1.17.2"           // Web Scraping
+    implementation "com.h2database:h2:2.2.224"       // Local Database
+    implementation "com.github.oshi:oshi-core:6.4.10" // System Info
+}

@@ -1,0 +1,8 @@
+dependencies {
+    api project(':modules:core')
+    
+    // Document parsing
+    implementation "org.apache.tika:tika-core:$tikaVersion"
+    implementation "org.apache.tika:tika-parsers-standard-package:$tikaVersion"
+    implementation "org.jsoup:jsoup:1.17.2"
+}

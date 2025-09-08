@@ -1,0 +1,12 @@
+dependencies {
+    // LangChain4j Core - basic setup for now
+    api "dev.langchain4j:langchain4j:$langchain4jVersion"
+    api "io.projectreactor:reactor-core:$reactorVersion"
+    
+    // Micronaut DI
+    implementation "io.micronaut:micronaut-inject"
+    implementation "jakarta.annotation:jakarta.annotation-api:2.1.1"
+    
+    // JSON processing
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.17.0"
+}

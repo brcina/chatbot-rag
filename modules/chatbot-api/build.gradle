@@ -1,0 +1,25 @@
+dependencies {
+    // All modules
+    implementation project(':modules:core')
+    implementation project(':modules:document-processor')
+    implementation project(':modules:tools')
+    
+    // Micronaut Web Stack
+    implementation "io.micronaut:micronaut-http-server-netty:$micronautVersion"
+    implementation "io.micronaut:micronaut-websocket:$micronautVersion"
+    implementation "io.micronaut.serde:micronaut-serde-jackson"
+    implementation "io.micronaut:micronaut-http-client:$micronautVersion" // For GenerativeAI Client
+    implementation "io.micronaut.reactor:micronaut-reactor"
+    
+    // RAG Components (integrated from ai-engine)
+    implementation "dev.langchain4j:langchain4j:$langchain4jVersion"
+    implementation "dev.langchain4j:langchain4j-ollama:$langchain4jVersion"
+    implementation "dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:$langchain4jVersion"
+    
+    // Runtime
+    runtimeOnly "ch.qos.logback:logback-classic"
+    
+    // Testing
+    testImplementation "io.micronaut:micronaut-http-client:$micronautVersion"
+    testImplementation "io.micronaut.test:micronaut-test-junit5"
+}

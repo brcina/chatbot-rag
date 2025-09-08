@@ -1,0 +1,78 @@
+plugins {
+    id 'groovy'
+    id 'io.micronaut.application' version '4.3.5'
+    id 'application'
+}
+
+// Frontend build tasks
+task npmInstall(type: Exec) {
+    description = 'Install NPM dependencies'
+    workingDir 'src/main/frontend'
+    commandLine 'npm', 'install'
+    
+    inputs.file 'src/main/frontend/package.json'
+    outputs.dir 'src/main/frontend/node_modules'
+}
+
+task buildFrontend(type: Exec) {
+    description = 'Build React frontend'
+    dependsOn npmInstall
+    workingDir 'src/main/frontend'
+    commandLine 'npm', 'run', 'build'
+    
+    inputs.dir 'src/main/frontend/src'
+    inputs.file 'src/main/frontend/package.json'
+    outputs.dir 'src/main/frontend/build'
+}
+
+task serveFrontend(type: Exec) {
+    description = 'Serve frontend in development mode'
+    dependsOn npmInstall
+    workingDir 'src/main/frontend'
+    commandLine 'npm', 'start'
+}
+
+// Install serve globally for production static serving
+task installServe(type: Exec) {
+    description = 'Install serve package globally'
+    commandLine 'npm', 'install', '-g', 'serve'
+    onlyIf { !file('/usr/local/bin/serve').exists() && !file('/usr/bin/serve').exists() }
+}
+
+task serveFrontendProduction(type: Exec) {
+    description = 'Serve built frontend with static server'
+    dependsOn buildFrontend, installServe
+    workingDir 'src/main/frontend'
+    commandLine 'serve', '-s', 'build', '-l', '3000'
+}
+
+build.dependsOn buildFrontend
+clean {
+    delete 'src/main/frontend/build'
+    delete 'src/main/frontend/node_modules'
+}
+
+micronaut {
+    version = micronautVersion
+    runtime 'netty'
+    testRuntime 'junit5'
+}
+
+application {
+    mainClass = 'com.chatbotrag.frontend.FrontendApplication'
+}
+
+dependencies {
+    // Micronaut Web Stack for static asset serving
+    implementation "io.micronaut:micronaut-http-server-netty:$micronautVersion"
+    implementation "io.micronaut.views:micronaut-views-core:$micronautVersion"
+    implementation "io.micronaut:micronaut-http-client:$micronautVersion"
+    implementation "io.micronaut.serde:micronaut-serde-jackson"
+    
+    // Runtime
+    runtimeOnly "ch.qos.logback:logback-classic"
+    
+    // Testing
+    testImplementation "io.micronaut:micronaut-http-client:$micronautVersion"
+    testImplementation "io.micronaut.test:micronaut-test-junit5"
+}
