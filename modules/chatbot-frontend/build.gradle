@@ -1,6 +1,6 @@
 plugins {
     id 'groovy'
-    id 'io.micronaut.application' version '4.3.5'
+    id 'io.micronaut.application' version '4.5.4'
     id 'application'
 }
 
@@ -46,7 +46,7 @@ task serveFrontendProduction(type: Exec) {
     commandLine 'serve', '-s', 'build', '-l', '3000'
 }
 
-build.dependsOn buildFrontend
+// build.dependsOn buildFrontend  // Disable npm tasks for now
 clean {
     delete 'src/main/frontend/build'
     delete 'src/main/frontend/node_modules'
@@ -68,9 +68,11 @@ dependencies {
     implementation "io.micronaut.views:micronaut-views-core:$micronautVersion"
     implementation "io.micronaut:micronaut-http-client:$micronautVersion"
     implementation "io.micronaut.serde:micronaut-serde-jackson"
+    implementation "io.micronaut.reactor:micronaut-reactor"
     
     // Runtime
     runtimeOnly "ch.qos.logback:logback-classic"
+    runtimeOnly "org.yaml:snakeyaml"
     
     // Testing
     testImplementation "io.micronaut:micronaut-http-client:$micronautVersion"

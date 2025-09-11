@@ -5,4 +5,16 @@ dependencies {
     implementation "org.apache.tika:tika-core:$tikaVersion"
     implementation "org.apache.tika:tika-parsers-standard-package:$tikaVersion"
     implementation "org.jsoup:jsoup:1.17.2"
+
+    // PicocLI for CLI functionality
+    implementation("info.picocli:picocli")
+    implementation("io.micronaut.groovy:micronaut-runtime-groovy")
+    implementation("io.micronaut.picocli:micronaut-picocli")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    compileOnly("info.picocli:picocli-codegen")
+    compileOnly("io.micronaut.serde:micronaut-serde-processor")
+    runtimeOnly("ch.qos.logback:logback-classic")
+
+    // Ollama
+    implementation "dev.langchain4j:langchain4j-ollama:$langchain4jVersion"
 }
