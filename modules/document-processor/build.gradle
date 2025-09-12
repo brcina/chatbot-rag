@@ -1,10 +1,5 @@
 dependencies {
     api project(':modules:core')
-    
-    // Document parsing
-    implementation "org.apache.tika:tika-core:$tikaVersion"
-    implementation "org.apache.tika:tika-parsers-standard-package:$tikaVersion"
-    implementation "org.jsoup:jsoup:1.17.2"
 
     // PicocLI for CLI functionality
     implementation("info.picocli:picocli")
@@ -14,7 +9,17 @@ dependencies {
     compileOnly("info.picocli:picocli-codegen")
     compileOnly("io.micronaut.serde:micronaut-serde-processor")
     runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("org.yaml:snakeyaml")
 
     // Ollama
+    implementation "dev.langchain4j:langchain4j:$langchain4jVersion"
+    implementation "dev.langchain4j:langchain4j-pgvector:$langchain4jVersion"
     implementation "dev.langchain4j:langchain4j-ollama:$langchain4jVersion"
+    implementation "dev.langchain4j:langchain4j-document-parser-apache-pdfbox:$langchain4jVersion"
+    implementation "dev.langchain4j:langchain4j-document-parser-apache-tika:$langchain4jVersion"
+
+    // Database für PgVector
+    implementation "org.postgresql:postgresql:42.7.1"
+    implementation "com.zaxxer:HikariCP:5.1.0"
+    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
 }
