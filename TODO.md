@@ -1,13 +1,8 @@
 ## Project TODOs
 
 ### 📝 To Do
-- [ ] Implement vector store service (choose and integrate vector database)
-- [ ] Implement GenerativeAIClient service for Ollama communication
-- [ ] Add RAG service implementation with document retrieval
-- [ ] Implement document upload and processing pipeline
-- [ ] Add MCP tools integration
-- [ ] Create Docker configurations for deployment
-- [ ] Add configuration management for different profiles
+- [ ] Fix the logger output missing logback etc. probably since the project is AI generated
+- [ ] Implement also the possibility to rechunk and re embed the already processed files
 
 ### ✅ Completed
 - [x] Project structure and architecture implemented
