@@ -135,7 +135,7 @@ open http://localhost:8080
 | Component               | Technology              | Version |
 |-------------------------|-------------------------|---------|
 | **Framework**           | Micronaut               | 4.3.5   |
-| **Language**            | Java                    | 17      |
+| **Language**            | Java                    | 21      |
 | **AI/LLM**              | LangChain4j + Ollama    | 0.35.0  |
 | **Vector Store**        | ChromaDB                | Latest  |
 | **Document Processing** | Apache Tika + PDFBox    | 2.9.1   |
@@ -182,10 +182,24 @@ ai:
 
 ### **Local Development**
 
+#### **Vector**
+
+```bash
+docker volume create pgdata_chatbot_rag
+docker run -d --name pgvector_chatbot_rag -v pgdata_chatbot_rag:/var/lib/postgresql/data -p 54320:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=chatbot_rag_db pgvector/pgvector:pg16
+```
+
+#### **AI**
+
 ```bash
 # Start Ollama (if not running)
 ollama serve
+ollama pull nextfire/paraphrase-multilingual-minilm:l12-v2
+```
 
+#### **Embedding**
+
+```bash
 # Pull a model (example)
 ollama pull llama3.2
 
