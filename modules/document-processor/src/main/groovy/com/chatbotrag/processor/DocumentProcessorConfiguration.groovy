@@ -24,9 +24,9 @@ class DocumentProcessorConfiguration {
     @Bean
     @Singleton
     EmbeddingModel embeddingModel(
-            @Value('${processor.model}') String model,
-            @Value('${processor.host}') String host,
-            @Value('${processor.port}') String port) {
+            @Value('${processor.embedding.model}') String model,
+            @Value('${processor.embedding.host}') String host,
+            @Value('${processor.embedding.port}') String port) {
         return OllamaEmbeddingModel
                 .builder()
                 .baseUrl("http://$host:$port")

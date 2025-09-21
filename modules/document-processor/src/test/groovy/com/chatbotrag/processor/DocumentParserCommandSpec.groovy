@@ -1,5 +1,6 @@
 package com.chatbotrag.processor
 
+import groovy.util.logging.Slf4j
 import io.micronaut.configuration.picocli.PicocliRunner
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
@@ -9,6 +10,7 @@ import spock.lang.Specification
 
 import java.nio.file.Paths
 
+@Slf4j
 class DocumentParserCommandSpec extends Specification {
 
     @Shared
@@ -31,14 +33,21 @@ class DocumentParserCommandSpec extends Specification {
     void "processing documents"() {
         given:
             ByteArrayOutputStream baos = new ByteArrayOutputStream()
+            PrintStream originalOut = System.out
             System.setOut(new PrintStream(baos))
             def docs = getResourcePath("docs")
             String[] args = ['-d', docs.toString(), "--chunking-strategy", "sentence"] as String[]
             PicocliRunner.run(DocumentProcessorCommand, ctx, args)
+            def output = baos.toString()
+
+            System.setOut(originalOut)
+            log.info("Command output:\n{}", output)
+            System.out.println(output)
+            
         expect:
-            baos.toString().contains('Starting to process file: TRBA-460.pdf')
-            !baos.toString().contains('Failed to process file: TRBA-460.pdf')
-            baos.toString().contains('Completed processing 1 documents')
+            output.contains('Starting to process file: TRBA-460.pdf')
+            !output.contains('Failed to process file: TRBA-460.pdf')
+            output.contains('Completed processing 1 documents')
     }
 
     private getResourcePath(String resourceName) {
