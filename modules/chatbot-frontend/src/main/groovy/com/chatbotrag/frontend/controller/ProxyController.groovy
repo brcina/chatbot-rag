@@ -15,23 +15,21 @@ import reactor.core.publisher.Mono
 class ProxyController {
     
     @Inject
-    @Client("${api.backend.url:http://localhost:8080}")
+    @Client("http://localhost:8080")
     HttpClient httpClient
     
     @Get("/{+path}")
-    Mono<HttpResponse<String>> proxyGet(String path, HttpRequest<?> request) {
+    Mono<HttpResponse<String>> proxyGet(String path) {
         return Mono.from(httpClient.exchange(
-            HttpRequest.GET("/api/${path}")
-                .headers(request.headers), 
+            HttpRequest.GET("/api/${path}"), 
             String
         ))
     }
     
     @Post("/{+path}")
-    Mono<HttpResponse<String>> proxyPost(String path, @Body String body, HttpRequest<?> request) {
+    Mono<HttpResponse<String>> proxyPost(String path, @Body String body) {
         return Mono.from(httpClient.exchange(
-            HttpRequest.POST("/api/${path}", body)
-                .headers(request.headers), 
+            HttpRequest.POST("/api/${path}", body), 
             String
         ))
     }

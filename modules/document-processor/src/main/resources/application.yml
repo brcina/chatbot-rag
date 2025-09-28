@@ -1,0 +1,15 @@
+processor:
+  embedding:
+    model: 'nextfire/paraphrase-multilingual-minilm:l12-v2'
+    dimension: 384
+    host: 'localhost'
+    port: 11434
+r2dbc:
+  datasources:
+    default:
+      db-type: postgres
+      schema-generate: NONE
+      dialect: POSTGRES
+      url: 'r2dbc:postgresql://localhost:54320/chatbot_rag_db'
+      username: postgres
+      password: postgres

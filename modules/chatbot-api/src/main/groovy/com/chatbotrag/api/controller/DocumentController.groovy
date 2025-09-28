@@ -1,7 +1,6 @@
 package com.chatbotrag.api.controller
 
-import com.chatbotrag.core.domain.Document
-import com.chatbotrag.core.service.DocumentService
+
 import io.micronaut.http.annotation.*
 import jakarta.inject.Inject
 import reactor.core.publisher.Flux

@@ -135,7 +135,7 @@ open http://localhost:8080
 | Component               | Technology              | Version |
 |-------------------------|-------------------------|---------|
 | **Framework**           | Micronaut               | 4.3.5   |
-| **Language**            | Java                    | 17      |
+| **Language**            | Java                    | 21      |
 | **AI/LLM**              | LangChain4j + Ollama    | 0.35.0  |
 | **Vector Store**        | ChromaDB                | Latest  |
 | **Document Processing** | Apache Tika + PDFBox    | 2.9.1   |
@@ -182,10 +182,87 @@ ai:
 
 ### **Local Development**
 
+#### **Vector**
+
+```bash
+docker volume create pgdata_chatbot_rag
+docker run -d --name pgvector_chatbot_rag -v pgdata_chatbot_rag:/var/lib/postgresql/data \
+  -p 54320:5432 -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_DB=chatbot_rag_db pgvector/pgvector:pg16
+```
+
+The schema:
+
+```sql
+-- 1. pgvector Extension aktivieren
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 2. Eigenes Schema erstellen
+CREATE SCHEMA IF NOT EXISTS chatbot_rag;
+
+-- 3. Sequences im eigenen Schema erstellen
+CREATE SEQUENCE chatbot_rag.document_text_seq;
+CREATE SEQUENCE chatbot_rag.document_text_chunk_seq;
+
+-- 4. document_text Tabelle im eigenen Schema
+CREATE TABLE chatbot_rag.document_text (
+    id BIGINT PRIMARY KEY DEFAULT nextval('chatbot_rag.document_text_id_seq'),
+    file_name VARCHAR(500) UNIQUE NOT NULL,
+    file_path TEXT,
+    file_size BIGINT,
+    mime_type VARCHAR(100),
+    content TEXT NOT NULL,
+    content_hash VARCHAR(64),                        -- SHA-256 Hash des Contents
+    file_hash VARCHAR(64),                           -- SHA-256 Hash der Originaldatei
+    metadata JSONB DEFAULT '{}',
+    processing_status VARCHAR(50) DEFAULT 'pending',
+    last_modified TIMESTAMP,                         -- Letzte Änderung der Originaldatei
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 5. document_text_Chunk Tabelle im eigenen Schema
+CREATE TABLE chatbot_rag.document_text_chunk (
+    id BIGINT PRIMARY KEY DEFAULT nextval('chatbot_rag.document_text_chunk_id_seq'),
+    document_text_id BIGINT NOT NULL REFERENCES chatbot_rag.document_text(id) ON DELETE CASCADE,
+    filename VARCHAR(500) NOT NULL,
+    chunk_index INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    embedding vector(384),
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(document_text_id, chunk_index)
+);
+
+-- 6. Indexes im eigenen Schema erstellen
+CREATE INDEX idx_document_text_filename ON chatbot_rag.document_text(filename);
+CREATE INDEX idx_document_text_status ON chatbot_rag.document_text(processing_status);
+CREATE INDEX idx_document_text_created ON chatbot_rag.document_text(created_at);
+CREATE INDEX idx_document_text_content_hash ON chatbot_rag.document_text(content_hash);
+CREATE INDEX idx_document_text_file_hash ON chatbot_rag.document_text(file_hash);
+CREATE INDEX idx_document_text_metadata ON chatbot_rag.document_text USING GIN(metadata);
+
+CREATE INDEX idx_document_text_chunk_document_text_id ON chatbot_rag.document_text_chunk(document_text_id);
+CREATE INDEX idx_document_text_chunk_filename ON chatbot_rag.document_text_chunk(filename);
+CREATE INDEX idx_document_text_chunk_token_count ON chatbot_rag.document_text_chunk(token_count);
+CREATE INDEX idx_document_text_chunk_embedding ON chatbot_rag.document_text_chunk 
+    USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+CREATE INDEX idx_document_text_chunk_content_fulltext_de ON chatbot_rag.document_text_chunk 
+    USING GIN(to_tsvector('german', content));
+```
+
+#### **AI**
+
 ```bash
 # Start Ollama (if not running)
 ollama serve
+ollama pull nextfire/paraphrase-multilingual-minilm:l12-v2
+```
 
+#### **Embedding**
+
+```bash
 # Pull a model (example)
 ollama pull llama3.2
 

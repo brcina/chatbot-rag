@@ -1,4 +1,7 @@
 dependencies {
+    implementation("io.micronaut.groovy:micronaut-runtime-groovy")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.data:micronaut-data-r2dbc")
     // LangChain4j Core - basic setup for now
     api "dev.langchain4j:langchain4j:$langchain4jVersion"
     api "io.projectreactor:reactor-core:$reactorVersion"
